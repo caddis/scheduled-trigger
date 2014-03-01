@@ -36,7 +36,7 @@ class Scheduled_trigger_mcp {
 
 	public function index()
 	{
-		ee()->cp->set_variable('cp_page_title', 'Instructions');
+		ee()->view->cp_page_title = 'Instructions';
 
 		$site_url = ee()->config->item('site_url');
 
@@ -59,7 +59,7 @@ class Scheduled_trigger_mcp {
 	{
 		ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
 
-		ee()->cp->set_variable('cp_page_title', 'Queue');
+		ee()->view->cp_page_title = 'Queue';
 
 		// View data
 
@@ -75,7 +75,7 @@ class Scheduled_trigger_mcp {
 	{
 		ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
 
-		ee()->cp->set_variable('cp_page_title', 'Log');
+		ee()->view->cp_page_title = 'Log';
 
 		// View data
 

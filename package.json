@@ -1,12 +1,12 @@
 {
 	"schema_version": "1.0",
-	"name" : "scheduled-trigger",
+	"name" : "schedule_trigger",
 	"label": "Scheduled Trigger",
-	"version": "0.1.2",
-	"types": ["extension,module"],
+	"version": "1.0.0",
+	"types": ["extension","module"],
 	"paths": {
 		"system": [
-			"system/expressionengine/third_party/scheduled-trigger"
+			"system/expressionengine/third_party/scheduled_trigger"
 		]
 	}
 }
