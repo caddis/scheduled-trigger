@@ -1,3 +1,11 @@
+# 1.0.1b
+
+2014-03-12
+
+- Extension settings to limit to channels
+- Alternative (custom) hook: scheduled_trigger
+- Reset queue CP link
+
 # 1.0.0
 
 2014-03-01
