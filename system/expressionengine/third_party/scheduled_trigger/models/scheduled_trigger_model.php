@@ -16,9 +16,12 @@ class Scheduled_trigger_model extends CI_Model {
 	private $_entry_table = 'channel_titles';
 	private $_data_table = 'channel_data';
 
+	private $settings = array();
+
 	public function check($site_id)
 	{
-		$now = ee()->localize->now;
+
+		$now = $this->now = ee()->localize->now;
 
 		// Query for previous check
 
@@ -31,11 +34,6 @@ class Scheduled_trigger_model extends CI_Model {
 
 		if ($results->num_rows() == 0)
 		{
-			ee()->db->insert($this->_table, array(
-				'site_id' => $site_id,
-				'check_date' => $now
-			));
-
 			$this->_init_queue($site_id);
 
 			return false;
@@ -201,14 +199,63 @@ class Scheduled_trigger_model extends CI_Model {
 		));
 	}
 
+	private function _get_extension_settings()
+	{
+		$query = $this->db->get_where('extensions', array('class' => 'Scheduled_trigger_ext'), 1);
+		
+		if ($query->num_rows() == 0){
+			show_error('<h2>Cannot find extension settings</h2><p>Was the extension not installed?</p>');
+		}
+
+		$row = $query->row();
+		$this->settings = unserialize($row->settings);
+
+		if ( ! isset($this->settings['triggers'])){
+			$this->settings['triggers'] = array('entry_submission_end');
+		}
+	}
+
+	public function reset_queue($site_id)
+	{
+		$this->db->delete($this->_queue_table, array('site_id' => $site_id)); 
+		$this->db->delete($this->_table, array('site_id' => $site_id)); 
+		return $this->check($site_id);
+	}
+
 	private function _init_queue($site_id)
 	{
+		// fetch extension settings
+		
+		$this->_get_extension_settings();
+
+		// fetch channels and restrict queueing to selected channels from settings		
+		
+		ee()->load->model('channel_model');
+		$channel_data = ee()->channel_model->get_channels()->result();
+
+		$channels = array( 0 ); // at least one item for sql where_in()
+
+		foreach ($channel_data as $item)
+		{
+			if (@$this->settings['channels'][$item->channel_id]){
+				$channels[] = (int) $item->channel_id;
+			}
+		}
+
+		// setup check table
+
+		ee()->db->insert($this->_table, array(
+			'site_id' => $site_id,
+			'check_date' => $this->now
+		));
+
 		// Insert scheduled posts
 
 		$results = ee()->db->select('entry_id')
 			->from($this->_entry_table)
 			->where('site_id', $site_id)
 			->where('entry_date >', ee()->localize->now)
+			->where_in('channel_id', $channels)
 			->get();
 
 		foreach ($results->result_array() as $row)
@@ -222,6 +269,7 @@ class Scheduled_trigger_model extends CI_Model {
 			->from($this->_entry_table)
 			->where('site_id', $site_id)
 			->where('expiration_date >', ee()->localize->now)
+			->where_in('channel_id', $channels)
 			->get();
 
 		foreach ($results->result_array() as $row)
@@ -259,17 +307,24 @@ class Scheduled_trigger_model extends CI_Model {
 
 		if ($meta->num_rows() > 0)
 		{
-			// Remove entry_id from data to simulate new entry
-
 			$data = $data->result_array();
 			$data = $data[0];
+
+			// Remove entry_id from data to simulate new entry
 
 			$data['entry_id'] = '';
 
 			$meta = $meta->result_array();
 			$meta = $meta[0];
 
-			ee()->extensions->call('entry_submission_end', $entry_id, $meta, $data);
+			// fetch triggers from settings
+
+			$this->_get_extension_settings();
+
+			foreach ($this->settings['triggers'] as $trigger)
+			{
+				ee()->extensions->call($trigger, $entry_id, $meta, $data);
+			}
 		}
 	}
 

@@ -1,10 +1,23 @@
-# Scheduled Trigger 1.0.0
+# Scheduled Trigger 1.0.1b
 
-Trigger standard hooks when scheduled ExpressionEngine entries go live or expire.
+Trigger hooks when scheduled ExpressionEngine entries go live or expire.
+
+Entry dates in ExpressionEngine are generally only used as filters when listing and viewing entries. This add-on adds entries that are about to expire or are about to go live to a queue, and updates the queue after an entry has been editted.
+
+## Example
+
+For example, a channel where members can publish classifieds which have a default expiration-date of 30 days after publish. When the entry expires the queue will trigger a system hook. This allows another add-on to listen to the hook, and for instance send an email to the author that the entry has expired.
 
 ## Setup
 
 Move the scheduled_trigger directory to your ExpressionEngine third_party folder and install from the control panel. Follow the instructions on the module page to setup the required cronjob.
+
+## The hook
+
+The extension hook is called with the $data['entry_id'] cleared, as if a new entry is published.  
+```ee()->extensions->call('hook_name', $entry_id, $meta, $data);```  
+Note: Scheduled Trigger does not handle return data, it is just a queued trigger.
+
 
 ## License
 

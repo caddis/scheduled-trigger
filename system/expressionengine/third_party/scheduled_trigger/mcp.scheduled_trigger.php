@@ -30,12 +30,31 @@ class Scheduled_trigger_mcp {
 		ee()->cp->set_right_nav(array(
 			'Instructions' => $this->_root_url,
 			'Queue' => $this->_method_url . 'queue',
-			'Log' => $this->_method_url . 'log'
+			'Log' => $this->_method_url . 'log',
+			'Settings' => BASE . AMP . 'C=addons_extensions&amp;M=extension_settings&amp;file=scheduled_trigger'
 		));
 	}
 
 	public function index()
 	{
+		if ($msg = ee()->session->flashdata('msg'))
+		{
+			ee()->javascript->output(array(
+				'$.ee_notice("'.lang($msg).'",{type:"success",open:true});',
+				'window.setTimeout(function(){$.ee_notice.destroy()}, 2000);'
+			));
+		}
+
+		if( ee()->input->get('reinitialize') == true)
+		{
+			ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
+			ee()->scheduled_trigger->reset_queue($this->_site_id);
+			ee()->session->set_flashdata('msg', 'reinitialized');
+			ee()->functions->redirect($this->_root_url);
+			exit;
+		}
+
+
 		ee()->view->cp_page_title = 'Instructions';
 
 		$site_url = ee()->config->item('site_url');
@@ -49,7 +68,8 @@ class Scheduled_trigger_mcp {
 		$cron_endpoint = $site_url;
 
 		$this->view_data = array(
-			'cron_endpoint' => $cron_endpoint . '/index.php?ACT=' . $action_id
+			'cron_endpoint' => $cron_endpoint . '/index.php?ACT=' . $action_id,
+			'reinitialize_url' => $this->_root_url . AMP . 'reinitialize=true'
 		);
 
 		return ee()->load->view('scheduled_trigger_index', $this->view_data, true);
