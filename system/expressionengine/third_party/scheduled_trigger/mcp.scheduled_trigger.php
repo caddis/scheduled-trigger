@@ -37,24 +37,6 @@ class Scheduled_trigger_mcp {
 
 	public function index()
 	{
-		if ($msg = ee()->session->flashdata('msg'))
-		{
-			ee()->javascript->output(array(
-				'$.ee_notice("'.lang($msg).'",{type:"success",open:true});',
-				'window.setTimeout(function(){$.ee_notice.destroy()}, 2000);'
-			));
-		}
-
-		if( ee()->input->get('reinitialize') == true)
-		{
-			ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
-			ee()->scheduled_trigger->reset_queue($this->_site_id);
-			ee()->session->set_flashdata('msg', 'reinitialized');
-			ee()->functions->redirect($this->_root_url);
-			exit;
-		}
-
-
 		ee()->view->cp_page_title = 'Instructions';
 
 		$site_url = ee()->config->item('site_url');
@@ -68,8 +50,7 @@ class Scheduled_trigger_mcp {
 		$cron_endpoint = $site_url;
 
 		$this->view_data = array(
-			'cron_endpoint' => $cron_endpoint . '/index.php?ACT=' . $action_id,
-			'reinitialize_url' => $this->_root_url . AMP . 'reinitialize=true'
+			'cron_endpoint' => $cron_endpoint . '/index.php?ACT=' . $action_id
 		);
 
 		return ee()->load->view('scheduled_trigger_index', $this->view_data, true);
@@ -81,14 +62,35 @@ class Scheduled_trigger_mcp {
 
 		ee()->view->cp_page_title = 'Queue';
 
+		// Queue clearing message
+
+		if ($msg = ee()->session->flashdata('msg')) {
+			ee()->javascript->output(array(
+				'$.ee_notice("' . lang($msg) . '",{type:"success", open:true});',
+				'window.setTimeout(function() {$.ee_notice.destroy()}, 2000);'
+			));
+		}
+
 		// View data
 
 		$this->view_data = array(
 			'session_id' => '',
-			'queue' => ee()->scheduled_trigger->get_queue($this->_site_id)
+			'queue' => ee()->scheduled_trigger->get_queue($this->_site_id),
+			'reinitialize_url' => $this->_method_url . 'reset'
 		);
 
 		return ee()->load->view('scheduled_trigger_queue', $this->view_data, true);
+	}
+
+	public function reset()
+	{
+		ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
+
+		ee()->scheduled_trigger->reset_queue($this->_site_id);
+
+		ee()->session->set_flashdata('msg', 'reset');
+
+		ee()->functions->redirect($this->_method_url . 'queue');
 	}
 
 	public function log()
