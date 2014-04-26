@@ -1,3 +1,11 @@
+# 1.1.0
+
+2014-04-25
+
+- Added ability to limit the queue to specific channels
+- Added alternative (custom) hook: scheduled_trigger
+- Reset queue option
+
 # 1.0.0
 
 2014-03-01

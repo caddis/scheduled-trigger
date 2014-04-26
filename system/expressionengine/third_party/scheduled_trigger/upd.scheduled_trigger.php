@@ -103,8 +103,7 @@ class Scheduled_trigger_upd {
 
 		// Remove module permissions
 
-		if ($query->row('module_id'))
-		{
+		if ($query->row('module_id')) {
 			ee()->db->delete('module_member_groups', array(
 				'module_id' => $query->row('module_id')
 			));
@@ -122,7 +121,7 @@ class Scheduled_trigger_upd {
 			'class' => 'Scheduled_trigger'
 		));
 
-		// Remove Scheduled Trigger tables
+		// Remove custom tables
 
 		ee()->dbforge->drop_table('scheduled_trigger');
 		ee()->dbforge->drop_table('scheduled_trigger_queue');
@@ -140,8 +139,7 @@ class Scheduled_trigger_upd {
 	{
 		// Version comparison
 
-		if ($current == $this->version)
-		{
+		if ($current == $this->version) {
 			return false;
 		}
 
