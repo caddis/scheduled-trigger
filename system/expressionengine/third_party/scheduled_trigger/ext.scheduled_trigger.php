@@ -121,9 +121,13 @@ class Scheduled_trigger_ext {
 		$posted_triggers = ee()->input->post('st_triggers');
 		$this->settings['triggers'] = array();		 
 
-		if (isset($posted_triggers['entry_submission_end'])) $this->settings['triggers'][] = 'entry_submission_end';
-		if (isset($posted_triggers['scheduled_trigger'])) $this->settings['triggers'][] = 'scheduled_trigger';
+		if (isset($posted_triggers['entry_submission_end'])) {
+			$this->settings['triggers'][] = 'entry_submission_end';
+		}
 
+		if (isset($posted_triggers['scheduled_trigger'])) {
+			$this->settings['triggers'][] = 'scheduled_trigger';
+		}
 
 		ee()->db->update(
 			'extensions', 
@@ -134,13 +138,6 @@ class Scheduled_trigger_ext {
 		ee()->session->set_flashdata('msg', 'Settings saved');
 		ee()->functions->redirect(BASE.AMP.'C=addons_extensions&amp;M=extension_settings&amp;file=scheduled_trigger');
 	}
-
-	public function _check_channel($channel_id)
-	{
-		ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
-		return (bool) @$this->settings['channels'][$channel_id];
-	}
-
 
 	/**
 	 * Activate Extension
@@ -209,51 +206,12 @@ class Scheduled_trigger_ext {
 
 	public function entry_submission_end($entry_id, $meta, $data)
 	{
-		$now = ee()->localize->now;
-
-		$entry_date = $meta['entry_date'];
-		$expiration_date = $meta['expiration_date'];
-
-		$allow_channel = $this->_check_channel($meta['channel_id']);
-
-		if ($entry_date > $now and $allow_channel) {
-			ee()->scheduled_trigger->add_queue($this->_site_id, $entry_id, 1);
-		} else {
-			ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 1);
-		}
-
-		if ($expiration_date > $now and $allow_channel) {
-			ee()->scheduled_trigger->add_queue($this->_site_id, $entry_id, 2);
-		} else {
-			ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 2);
-		}
-
-		return $data;
+		$this->_process_entry($entry_id, $meta);
 	}
 
 	public function update_multi_entries_loop($entry_id, $data)
 	{
-		$query = ee()->db
-			->select('channel_id')
-			->where('entry_id', $entry_id)
-			->get('channel_titles');
-
-		$row = $query->row();
-
-		$now = ee()->localize->now;
-
-		$entry_date = $data['entry_date'];
-		$expiration_date = $data['expiration_date'];
-
-		$allow_channel = $this->_check_channel($row->channel_id);
-
-		if ($entry_date > $now and $allow_channel) {
-			ee()->scheduled_trigger->add_queue($this->_site_id, $entry_id, 1);
-		}
-
-		if ($expiration_date > $now and $allow_channel) {
-			ee()->scheduled_trigger->add_queue($this->_site_id, $entry_id, 2);
-		}
+		$this->_process_entry($entry_id, $data);
 	}
 
 	public function delete_entries_loop($entry_id, $channel_id)
@@ -264,6 +222,41 @@ class Scheduled_trigger_ext {
 		ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 2);
 
 		ee()->scheduled_trigger->remove_log($this->_site_id, $entry_id);
+	}
+
+	private function _process_entry($entry_id, $data)
+	{
+		ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
+
+		$now = ee()->localize->now;
+
+		// Multi entries loop
+
+		if (! isset($data['channel_id'])) {
+			$entry_data = ee()->scheduled_trigger->get_entry_data($entry_id);
+
+			$data['channel_id'] = $entry_data->channel_id;
+			$data['expiration_date'] = $entry_data->expiration_date;
+		}
+
+		$allow_channel = $this->_check_channel($data['channel_id']);
+
+		if ($data['entry_date'] > $now and $allow_channel) {
+			ee()->scheduled_trigger->add_queue($this->_site_id, $entry_id, 1);
+		} else {
+			ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 1);
+		}
+
+		if ($data['expiration_date'] > $now and $allow_channel) {
+			ee()->scheduled_trigger->add_queue($this->_site_id, $entry_id, 2);
+		} else {
+			ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 2);
+		}
+	}
+
+	public function _check_channel($channel_id)
+	{
+		return (bool) @$this->settings['channels'][$channel_id];
 	}
 
 	private function _add_hook($name)

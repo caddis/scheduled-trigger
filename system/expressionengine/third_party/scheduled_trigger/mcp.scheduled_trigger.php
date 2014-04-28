@@ -88,7 +88,7 @@ class Scheduled_trigger_mcp {
 
 		ee()->scheduled_trigger->reset_queue($this->_site_id);
 
-		ee()->session->set_flashdata('msg', 'reset');
+		ee()->session->set_flashdata('msg', 'Queue reset');
 
 		ee()->functions->redirect($this->_method_url . 'queue');
 	}

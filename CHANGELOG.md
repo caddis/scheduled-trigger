@@ -1,3 +1,9 @@
+# 1.1.1
+
+2014-04-28
+
+- Resolved issue with date checking on update_multi_entries_loop hook
+
 # 1.1.0
 
 2014-04-25

@@ -197,6 +197,16 @@ class Scheduled_trigger_model extends CI_Model {
 		return $this->check($site_id);
 	}
 
+	public function get_entry_data($entry_id)
+	{
+		$results = ee()->db->select('channel_id, expiration_date')
+			->from($this->_entry_table)
+			->where('entry_id', $entry_id)
+			->get();
+
+		return $results->row();
+	}
+
 	private function _get_extension_settings()
 	{
 		$query = $this->db->get_where('extensions', array(
