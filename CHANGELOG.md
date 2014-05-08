@@ -1,3 +1,9 @@
+# 1.1.2
+
+2014-05-08
+
+- Resolved error being thrown when removing entries
+
 # 1.1.1
 
 2014-04-28

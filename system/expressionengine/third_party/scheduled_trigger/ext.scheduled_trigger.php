@@ -15,7 +15,7 @@ class Scheduled_trigger_ext {
 	public $name = SCHEDULED_TRIGGER_NAME;
 	public $version = SCHEDULED_TRIGGER_VER;
 	public $description = SCHEDULED_TRIGGER_DESC;
-	public $docs_url = '';
+	public $docs_url = 'https://github.com/caddis/scheduled-trigger';
 	public $settings_exist	= 'y';
 	public $settings = array();
 
@@ -216,7 +216,7 @@ class Scheduled_trigger_ext {
 
 	public function delete_entries_loop($entry_id, $channel_id)
 	{
-		$allow_channel = $this->_check_channel($meta['channel_id']);
+		$allow_channel = $this->_check_channel($channel_id);
 
 		ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 1);
 		ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 2);

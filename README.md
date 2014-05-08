@@ -1,4 +1,4 @@
-# Scheduled Trigger 1.1.1
+# Scheduled Trigger 1.1.2
 
 Trigger hooks when scheduled ExpressionEngine entries go live or expire.
 
