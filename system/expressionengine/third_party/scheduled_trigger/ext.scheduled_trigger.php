@@ -216,7 +216,7 @@ class Scheduled_trigger_ext {
 
 	public function delete_entries_loop($entry_id, $channel_id)
 	{
-		$allow_channel = $this->_check_channel($channel_id);
+		ee()->load->model('scheduled_trigger_model', 'scheduled_trigger');
 
 		ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 1);
 		ee()->scheduled_trigger->remove_queue($this->_site_id, $entry_id, 2);
