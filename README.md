@@ -37,17 +37,27 @@ The module control panel in ExpressionEngine has four tab areas:
 
 This is where you can get the instructions and end point for the cron job.
 
+![Instructions](http://files.caddis.co/addons/scheduled-trigger/instructions.jpg)
+
+![cPanel](http://files.caddis.co/addons/scheduled-trigger/cpanel.jpg)
+
 ### Queue
 
 Here you can see any entries that have been schedule to publish or expire in the future.
+
+![Queue](http://files.caddis.co/addons/scheduled-trigger/queue.jpg)
 
 ### Log
 
 The log shows you recent entries that were formerly in the queue and have triggered hooks.
 
+![Log](http://files.caddis.co/addons/scheduled-trigger/log.jpg)
+
 ### Settings
 
 Here you can choose which channels to include in the queue, and which hooks can be triggered.
+
+![cPanel](http://files.caddis.co/addons/scheduled-trigger/settings.jpg)
 
 ## Hook Information
 
@@ -57,24 +67,18 @@ The extension hook is called with the $data['entry_id'] cleared, as if a new ent
 
 Note: Scheduled Trigger does not handle return data, it is just a queued trigger.
 
-## Screen Shots
-
-![Instructions](http://files.caddis.co/addons/scheduled-trigger/instructions.jpg)
-
-![Queue](http://files.caddis.co/addons/scheduled-trigger/queue.jpg)
-
-![Log](http://files.caddis.co/addons/scheduled-trigger/log.jpg)
-
-![cPanel](http://files.caddis.co/addons/scheduled-trigger/settings.jpg)
-
-![cPanel](http://files.caddis.co/addons/scheduled-trigger/cpanel.jpg)
-
 ## License
 
 Copyright 2014 Caddis Interactive, LLC
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+	http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
