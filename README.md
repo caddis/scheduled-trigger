@@ -25,7 +25,7 @@ Or perhaps you are using EE template caching or using an add-on like [Stash] wit
 
 ## Setup
 
-Download and unarchive the package, then move the scheduled_trigger directory to your ExpressionEngine third_party folder. From the Add-Ons > Modules area of the EE control panel, install the module.
+Download and extract the package, then move the scheduled_trigger directory to your ExpressionEngine third_party folder. From the Add-Ons > Modules area of the EE control panel, install the module.
 
 Once installed, you can find information about setting up the cron, and the URL for the endpoint to use with the cron setup on the Scheduled Trigger Module Page in the EE Control Panel.
 
