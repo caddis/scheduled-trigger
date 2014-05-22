@@ -1,4 +1,4 @@
-# Scheduled Trigger 1.1.2
+# Scheduled Trigger 1.1.3
 
 Trigger entry submission hooks when scheduled ExpressionEngine entries go live or expire.
 
