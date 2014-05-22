@@ -160,7 +160,7 @@ class Scheduled_trigger_model extends CI_Model {
 			->from($this->_log_table . ' L')
 			->join('channel_titles T', 'T.entry_id = L.entry_id')
 			->where('L.site_id', $site_id)
-			->order_by('L.triggered', 'asc')
+			->order_by('L.triggered', 'desc')
 			->limit(20)
 			->get();
 

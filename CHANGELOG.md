@@ -1,3 +1,9 @@
+# 1.1.3
+
+2014-05-22
+
+- Changed log ordering so that most recently triggered items appear on top.
+
 # 1.1.2
 
 2014-05-08

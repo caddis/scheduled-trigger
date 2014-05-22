@@ -15,7 +15,7 @@ class Scheduled_trigger_ext {
 	public $name = SCHEDULED_TRIGGER_NAME;
 	public $version = SCHEDULED_TRIGGER_VER;
 	public $description = SCHEDULED_TRIGGER_DESC;
-	public $docs_url = 'https://github.com/caddis/scheduled-trigger';
+	public $docs_url = SCHEDULED_TRIGGER_DOCS;
 	public $settings_exist	= 'y';
 	public $settings = array();
 
