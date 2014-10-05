@@ -1,3 +1,9 @@
+# 1.1.4
+
+2014-10-05
+
+- Resolved issue of incorrect method being set for custom scheduled_trigger hook.
+
 # 1.1.3
 
 2014-05-22

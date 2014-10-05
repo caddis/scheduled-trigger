@@ -55,10 +55,10 @@ class Scheduled_trigger_ext {
 		if (! isset($current['triggers'])) {
 			$current['triggers'] = array();
 		}
-		
+
 		$this->settings = $current;
 
-		$vars = array( 
+		$vars = array(
 			'channel_checkboxes' => array(),
 			'triggers' => array(),
 			'post_url' => 'C=addons_extensions&M=save_extension_settings&file=scheduled_trigger'
@@ -105,11 +105,10 @@ class Scheduled_trigger_ext {
 
 	public function save_settings()
 	{
-		// Fetch channels
-
-		$posted_channels = ee()->input->post('st_channel');
-		
 		ee()->load->model('channel_model');
+
+		// Fetch channels
+		$posted_channels = ee()->input->post('st_channel');
 		$channel_data = ee()->channel_model->get_channels()->result();
 
 		foreach ($channel_data as $item) {
@@ -117,9 +116,8 @@ class Scheduled_trigger_ext {
 		}
 
 		// Fetch triggers
-
 		$posted_triggers = ee()->input->post('st_triggers');
-		$this->settings['triggers'] = array();		 
+		$this->settings['triggers'] = array();
 
 		if (isset($posted_triggers['entry_submission_end'])) {
 			$this->settings['triggers'][] = 'entry_submission_end';
@@ -129,19 +127,18 @@ class Scheduled_trigger_ext {
 			$this->settings['triggers'][] = 'scheduled_trigger';
 		}
 
-		ee()->db->update(
-			'extensions', 
-			array('settings' => serialize($this->settings)), 
-			array('class'=>'Scheduled_trigger_ext')
+		ee()->db->update('extensions',
+			array('settings' => serialize($this->settings)),
+			array('class' => __CLASS__)
 		);
 
 		ee()->session->set_flashdata('msg', 'Settings saved');
-		ee()->functions->redirect(BASE.AMP.'C=addons_extensions&amp;M=extension_settings&amp;file=scheduled_trigger');
+		ee()->functions->redirect(BASE.AMP . 'C=addons_extensions&amp;M=extension_settings&amp;file=scheduled_trigger');
 	}
 
 	/**
 	 * Activate Extension
-	 * 
+	 *
 	 * @return void
 	 */
 	public function activate_extension()
@@ -156,7 +153,6 @@ class Scheduled_trigger_ext {
 		);
 
 		// Default settings
-
 		$this->settings = array(
 			'channels' => array(),
 			'triggers' => array('entry_submission_end')
@@ -169,7 +165,6 @@ class Scheduled_trigger_ext {
 		}
 
 		// Add the hooks
-
 		foreach ($hooks as $hook => $method) {
 			$this->_add_hook($hook, $method);
 		}
@@ -186,9 +181,25 @@ class Scheduled_trigger_ext {
 			return false;
 		}
 
-		if ($current < '1.1') {
+		if ($current > '1.1') {
+			if ($current < '1.1.4') {
+				// Remove incorrect method reference
+				ee()->db->delete('extensions', array(
+					'class' => __CLASS__,
+					'method' => 'scheduled_trigger',
+					'hook' => 'scheduled_trigger'
+				));
+			}
+
+			// Add new custom "scheduled_trigger" hook
 			$this->_add_hook('scheduled_trigger', 'entry_submission_end');
 		}
+
+		// Update extension version number
+		ee()->db->update('extensions',
+			array('version' => $this->version),
+			array('class' => __CLASS__)
+		);
 
 		return true;
 	}
@@ -231,7 +242,6 @@ class Scheduled_trigger_ext {
 		$now = ee()->localize->now;
 
 		// Multi entries loop
-
 		if (! isset($data['channel_id'])) {
 			$entry_data = ee()->scheduled_trigger->get_entry_data($entry_id);
 
@@ -259,11 +269,11 @@ class Scheduled_trigger_ext {
 		return (bool) @$this->settings['channels'][$channel_id];
 	}
 
-	private function _add_hook($name)
+	private function _add_hook($name, $method)
 	{
 		ee()->db->insert('extensions', array(
 			'class' => __CLASS__,
-			'method' => $name,
+			'method' => $method,
 			'hook' => $name,
 			'settings' => serialize($this->settings),
 			'priority' => 10,
